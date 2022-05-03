@@ -1,35 +1,50 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
-
+import { useEffect,useState } from 'react';
+import axios from 'axios';
 const add = require("../assets/favicon.png");
 const perfil = require('../assets/perfil.png')
-const listaContatos = [
-    {
-      name: 'Amy Farha',
-      login: 'amy@ifpe.edu.br',
-      avatar_url: add,
-      telefone: '(81)8888-9999'
-    },
-    {
-      name: 'Chris Jackson',
-      login: 'chris@ifpe.edu.br',
-      avatar_url: perfil,
-      telefone: '(11)9999-8888'
-    }
-  ]
+
+
+
+
 
 
 function ContatosScreen({navigation}) {
+  const [getContatos,setContatos] = useState([])
+
+  useEffect(()=>{
+    function consultarDados(){
+  
+      axios.get('http://professornilson.com/testeservico/clientes')
+      
+      .then(function (response) {
+      console.log(response);
+      setContatos(response.data)
+      }).catch(function (error) {
+      console.log(error);
+      
+      });
+      
+      }
+      consultarDados();
+  },[])
     return (      
         <View>
             {
-                listaContatos.map((l, i) => (
-                <ListItem key={i} bottomDivider onPress={()=>navigation.navigate('Editar')}>
-                    <Avatar rounded source={{uri: l.avatar_url}} />
+                getContatos.map((contato) => (
+                <ListItem 
+                key={contato.id} bottomDivider onPress={()=>navigation.navigate('Editar', {
+                  nome:contato.nome,
+                  telefone:contato.telefone,
+                  email:contato.email,
+                  id:contato.id
+
+                })}>
                     <ListItem.Content>
-                    <ListItem.Title>{l.name}</ListItem.Title>
-                    <ListItem.Subtitle>{l.telefone}</ListItem.Subtitle>
+                    <ListItem.Title>{contato.nome}</ListItem.Title>
+                    <ListItem.Subtitle>{contato.telefone}</ListItem.Subtitle>
                     </ListItem.Content>
                 </ListItem>
                 ))
